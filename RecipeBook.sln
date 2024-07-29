@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32802.440
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{AF1F8F7D-DC90-41EB-AE30-8396648C72F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A341EF80-DFF1-4664-83D6-3D078BF114A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{0B1C3057-81E5-466D-B7A3-4B099601346D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3F3AE9D0-9B9A-4E5A-B31E-679181E28B86}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook.Api", "src\RecipeBook.Api\RecipeBook.Api.csproj", "{CD06BDF5-9F77-4271-92AC-0DCE89DC5E06}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook.ServiceLibrary", "src\RecipeBook.ServiceLibrary\RecipeBook.ServiceLibrary.csproj", "{92F0BF55-AF08-43AF-9C66-F5CE41A8400D}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "RecipeBook.Main", "src\RecipeBook.Main\RecipeBook.Main.sqlproj", "{70866F2D-3730-4424-85A4-9C937B60B91B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeBook.ServiceLibrary.Tests", "tests\RecipeBook.ServiceLibrary.Tests\RecipeBook.ServiceLibrary.Tests.csproj", "{D7F95988-7C07-459D-BAF3-C88566F28FF3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AF1F8F7D-DC90-41EB-AE30-8396648C72F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF1F8F7D-DC90-41EB-AE30-8396648C72F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF1F8F7D-DC90-41EB-AE30-8396648C72F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF1F8F7D-DC90-41EB-AE30-8396648C72F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD06BDF5-9F77-4271-92AC-0DCE89DC5E06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD06BDF5-9F77-4271-92AC-0DCE89DC5E06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD06BDF5-9F77-4271-92AC-0DCE89DC5E06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD06BDF5-9F77-4271-92AC-0DCE89DC5E06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92F0BF55-AF08-43AF-9C66-F5CE41A8400D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92F0BF55-AF08-43AF-9C66-F5CE41A8400D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92F0BF55-AF08-43AF-9C66-F5CE41A8400D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92F0BF55-AF08-43AF-9C66-F5CE41A8400D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70866F2D-3730-4424-85A4-9C937B60B91B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70866F2D-3730-4424-85A4-9C937B60B91B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70866F2D-3730-4424-85A4-9C937B60B91B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{70866F2D-3730-4424-85A4-9C937B60B91B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70866F2D-3730-4424-85A4-9C937B60B91B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70866F2D-3730-4424-85A4-9C937B60B91B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{D7F95988-7C07-459D-BAF3-C88566F28FF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7F95988-7C07-459D-BAF3-C88566F28FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7F95988-7C07-459D-BAF3-C88566F28FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7F95988-7C07-459D-BAF3-C88566F28FF3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CD06BDF5-9F77-4271-92AC-0DCE89DC5E06} = {A341EF80-DFF1-4664-83D6-3D078BF114A1}
+		{92F0BF55-AF08-43AF-9C66-F5CE41A8400D} = {A341EF80-DFF1-4664-83D6-3D078BF114A1}
+		{70866F2D-3730-4424-85A4-9C937B60B91B} = {A341EF80-DFF1-4664-83D6-3D078BF114A1}
+		{D7F95988-7C07-459D-BAF3-C88566F28FF3} = {3F3AE9D0-9B9A-4E5A-B31E-679181E28B86}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7ECA2496-463C-4991-87AE-BE689612B709}
+	EndGlobalSection
+EndGlobal

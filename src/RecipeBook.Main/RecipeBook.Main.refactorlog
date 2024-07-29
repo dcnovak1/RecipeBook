@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="10afc690-f0c5-44a5-80c0-776043069ec5" ChangeDateTime="07/20/2024 19:35:20">
+    <Property Name="ElementName" Value="[dbo].[Ingredients].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Ingredients]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="RecipeId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0b3841dc-8dc2-4bb3-b1f5-bc1dae1fe8d5" ChangeDateTime="07/20/2024 19:44:05">
+    <Property Name="ElementName" Value="[dbo].[Instructions].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Instructions]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="RecipeId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="edf7db09-4656-454d-b21e-5be3bcb642c8" ChangeDateTime="07/20/2024 19:45:40">
+    <Property Name="ElementName" Value="[dbo].[FK_Ingredients_Recipe_RecipeId]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[Ingredients]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[FK_Ingredients_Recipes_RecipeId]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="deebcdb6-e33d-483b-b3a7-e8187232935c" ChangeDateTime="07/20/2024 19:45:52">
+    <Property Name="ElementName" Value="[dbo].[FK_Instructions_Recipes_]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[Instructions]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[FK_Instructions_Recipes_Id]" />
+  </Operation>
+</Operations>
