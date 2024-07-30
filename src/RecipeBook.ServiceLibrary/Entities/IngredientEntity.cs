@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RecipeBook.ServiceLibrary.Entities
 {
-    public class IngredientsEntity
+    public class IngredientEntity
     {
         public Guid RecipeId { get; set; }
         public int OrdinalPosition { get; set; }

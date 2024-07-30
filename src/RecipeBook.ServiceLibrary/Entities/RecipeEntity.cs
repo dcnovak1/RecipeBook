@@ -14,7 +14,7 @@ namespace RecipeBook.ServiceLibrary.Entities
 
         public DateTimeOffset CreatedDate { get; set; }
 
-        public IList<IngredientsEntity> Ingredients { get; set; } = new List<IngredientsEntity>();
-        public IList<InstructionsEntity> Instructions { get; set; } = new List<InstructionsEntity>();
+        public IList<IngredientEntity> Ingredients { get; set; } = new List<IngredientEntity>();
+        public IList<InstructionEntity> Instructions { get; set; } = new List<InstructionEntity>();
     }
 }

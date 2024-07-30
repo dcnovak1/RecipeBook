@@ -13,6 +13,8 @@ namespace RecipeBook.ServiceLibrary.Repository
         Task<int> InsertAsync(RecipeEntity entity);
         Task<int> DeleteAsync(Guid recipeId);
         Task<int> UpdateAsync(RecipeEntity entity);
+        Task<RecipeEntity> GetByIdAsync(Guid recipeId);
+        Task<IEnumerable<RecipeEntity>> GetAsync(int numberOfItems, int pageNumber);
     }
 
     public class RecipeRepository : IRecipeRepository
@@ -28,16 +30,83 @@ namespace RecipeBook.ServiceLibrary.Repository
             _instructionsRepository = instructionsRepository;
         }
 
-        public async Task<int> InsertAsync(RecipeEntity entity)
+
+        public async Task<IEnumerable<RecipeEntity>> GetAsync(int pageSize, int pageNumber)
         {
             using (var connection = new SqlConnection("Data Source=host.docker.internal,5050; Initial Catalog=RecipeBook;User Id=SA;Password=P@ssword123;MultipleActiveResultSets=true"))
             {
                 await connection.OpenAsync();
                 using (var transaction = await connection.BeginTransactionAsync())
                 {
-                    var rowsAffected = await connection.ExecuteAsync
-                    (
-                        @"INSERT INTO [dbo].[Recipes]
+                    
+                    var reader = await connection.ExecuteReaderAsync(@"SELECT * FROM [dbo].[Recipes] ORDER BY [Id] OFFSET @offsetNumber ROWS FETCH NEXT @numberOfItems ROWS ONLY;", new { offsetNumber = (pageNumber*pageSize), numberOfItems = pageSize }, transaction: transaction);
+
+
+                    IList<RecipeEntity> recipe = new List<RecipeEntity>();
+                    var parser = reader.GetRowParser<RecipeEntity>(typeof(RecipeEntity));
+
+                    while (reader.Read())
+                    {
+                        recipe.Add(parser(reader));
+                    }
+
+
+                    foreach (RecipeEntity r in recipe)
+                    {
+                        r.Ingredients = await _ingredientsRepository.GetByIdAsync(connection, transaction, r.Id);
+                        r.Instructions = await _instructionsRepository.GetByIdAsync(connection, transaction, r.Id);
+                    }
+
+                    return recipe;
+                }
+            }
+        }
+
+        public async Task<RecipeEntity> GetByIdAsync(Guid recipeId)
+        {
+            using (var connection = new SqlConnection("Data Source=host.docker.internal,5050; Initial Catalog=RecipeBook;User Id=SA;Password=P@ssword123;MultipleActiveResultSets=true"))
+            {
+                await connection.OpenAsync();
+                using (var transaction = await connection.BeginTransactionAsync())
+                {
+                    RecipeEntity recipe = null;
+                    try
+                    {
+                        var reader = await connection.ExecuteReaderAsync(@"SELECT * FROM [dbo].[Recipes] WHERE Id = @Id", new { Id = recipeId }, transaction: transaction);
+
+
+
+                        var parser = reader.GetRowParser<RecipeEntity>(typeof(RecipeEntity));
+
+                        reader.Read();
+                        recipe = parser(reader);
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+
+                    recipe.Ingredients = await _ingredientsRepository.GetByIdAsync(connection, transaction, recipeId);
+                    recipe.Instructions = await _instructionsRepository.GetByIdAsync(connection, transaction, recipeId);
+
+                    return recipe;
+                }
+            }
+        }
+
+        public async Task<int> InsertAsync(RecipeEntity entity)
+        {
+            using (var connection = new SqlConnection("Data Source=host.docker.internal,5050; Initial Catalog=RecipeBook;User Id=SA;Password=P@ssword123;MultipleActiveResultSets=true"))
+            {
+                var rowsAffected = 0;
+                try
+                {
+                    await connection.OpenAsync();
+                    using (var transaction = await connection.BeginTransactionAsync())
+                    {
+                        rowsAffected = await connection.ExecuteAsync
+                        (
+                            @"INSERT INTO [dbo].[Recipes]
                         (
                             [Id],
                             [Title],
@@ -52,25 +121,31 @@ namespace RecipeBook.ServiceLibrary.Repository
                             @Description,
                             @Logo,
                             @CreatedDate
-                        )", 
-                        new 
-                        { 
-                            entity.Id, 
-                            entity.Title, 
-                            entity.Description, 
-                            entity.Logo, 
-                            entity.CreatedDate
-                        },
-                        transaction: transaction
-                    );
+                        )",
+                            new
+                            {
+                                entity.Id,
+                                entity.Title,
+                                entity.Description,
+                                entity.Logo,
+                                entity.CreatedDate
+                            },
+                            transaction: transaction
+                        );
 
-                    rowsAffected += await _ingredientsRepository.InsertAsync(connection, transaction, entity.Ingredients);
-                    rowsAffected += await _instructionsRepository.InsertAsync(connection, transaction, entity.Instructions);
+                        rowsAffected += await _ingredientsRepository.InsertAsync(connection, transaction, entity.Ingredients);
+                        rowsAffected += await _instructionsRepository.InsertAsync(connection, transaction, entity.Instructions);
 
-                    transaction.Commit();
-
-                    return rowsAffected;
+                        transaction.Commit();
+                    }
                 }
+                catch
+                {
+                    return -1;
+                }
+
+                return rowsAffected;
+              
             }
         }
 
@@ -81,23 +156,33 @@ namespace RecipeBook.ServiceLibrary.Repository
                 await connection.OpenAsync();
                 using (var transaction = await connection.BeginTransactionAsync())
                 {
-                    var rowsAffected = await connection.ExecuteAsync
-                    (
-                        @"UPDATE [dbo].[Recipes]
-                        SET Title = @Title, Description = @Description, Logo = @Logo, CreatedDate = @CreatedDate WHERE Id = @Id",
-                        new
-                        {
-                            entity.Title,
-                            entity.Description,
-                            entity.Logo,
-                            entity.CreatedDate,
-                            entity.Id
-                        },
-                        transaction: transaction
-                    );
+                    var rowsAffected = 0;
+                    try
+                    {
+                        rowsAffected = await connection.ExecuteAsync
+                        (
+                            @"UPDATE [dbo].[Recipes]
+                            SET Title = @Title, Description = @Description, Logo = @Logo, CreatedDate = @CreatedDate WHERE Id = @Id",
+                            new
+                            {
+                                entity.Title,
+                                entity.Description,
+                                entity.Logo,
+                                entity.CreatedDate,
+                                entity.Id
+                            },
+                            transaction: transaction
+                        );
+                    }
+                    catch
+                    {
+                        return -1;
+                    }
+
+                    
 
                     rowsAffected += await _ingredientsRepository.UpdateAsync(connection, transaction, entity.Ingredients);
-                    //rowsAffected += await _instructionsRepository.UpdateAsync(connection, transaction, entity.Instructions);
+                    rowsAffected += await _instructionsRepository.UpdateAsync(connection, transaction, entity.Instructions);
 
                     transaction.Commit();
 

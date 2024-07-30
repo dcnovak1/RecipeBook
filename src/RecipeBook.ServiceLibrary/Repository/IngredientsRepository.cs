@@ -12,16 +12,43 @@ namespace RecipeBook.ServiceLibrary.Repository
 
     public interface IIngredientsRepository
     {
-        public Task<int> InsertAsync(SqlConnection connection, DbTransaction transaction, IEnumerable<IngredientsEntity> ingrediantEntity);
+
+        public Task<int> InsertAsync(SqlConnection connection, DbTransaction transaction, IEnumerable<IngredientEntity> ingrediantEntity);
 
         public Task<int> DeleteAsync(SqlConnection connection, DbTransaction transaction, Guid recipeId);
-        public Task<int> UpdateAsync(SqlConnection connection, DbTransaction transaction, IEnumerable<IngredientsEntity> ingrediantEntity);
+        public Task<int> UpdateAsync(SqlConnection connection, DbTransaction transaction, IEnumerable<IngredientEntity> ingrediantEntity);
+        public Task<IList<IngredientEntity>> GetByIdAsync(SqlConnection connection, DbTransaction transaction, Guid recipeId);
+        public Task<int> DeleteOneAsync(SqlConnection connection, DbTransaction transaction, Guid recipeId, int ordinalPosition);
     }
 
     public class IngredientsRepository : IIngredientsRepository
     {
 
-        public async Task<int> InsertAsync(SqlConnection connection, DbTransaction transaction, IEnumerable<IngredientsEntity> ingrediantEntity)
+
+        public async Task<IList<IngredientEntity>> GetByIdAsync(SqlConnection connection, DbTransaction transaction, Guid recipeId)
+        {
+            IList<IngredientEntity> ingredients = new List<IngredientEntity>();
+            try
+            {
+                var reader = await connection.ExecuteReaderAsync(@"SELECT * FROM [dbo].[Ingredients] WHERE RecipeId = @RecipeId", new { RecipeId = recipeId }, transaction: transaction);
+
+                var parser = reader.GetRowParser<IngredientEntity>(typeof(IngredientEntity));
+
+                while (reader.Read())
+                {
+                    ingredients.Add(parser(reader));
+                }
+            }
+            catch
+            {
+                return ingredients;
+            }
+            
+
+            return ingredients;
+        }
+
+        public async Task<int> InsertAsync(SqlConnection connection, DbTransaction transaction, IEnumerable<IngredientEntity> ingrediantEntity)
         {
             var rowsAffected = 0;
 
@@ -60,25 +87,17 @@ namespace RecipeBook.ServiceLibrary.Repository
             return rowsAffected;
         }
 
-        public async Task<int> UpdateAsync(SqlConnection connection, DbTransaction transaction, IEnumerable<IngredientsEntity> ingrediantEntity)
+        public async Task<int> UpdateAsync(SqlConnection connection, DbTransaction transaction, IEnumerable<IngredientEntity> ingrediantEntity)
         {
             var rowsAffected = 0;
 
-            if (ingrediantEntity.AsList<IngredientsEntity>().Count == 0)
-            {
-                return 0;
-            }
+            IngredientEntity lastIngredientEntity = null;
 
-            Guid recipeId = ingrediantEntity.AsList<IngredientsEntity>()[0].RecipeId;
-            int greatestOrdingalPosition = -1;
+            IList<IngredientEntity> remainingEntities = new List<IngredientEntity>();
+
             foreach (var entity in ingrediantEntity)
             {
-                if (entity.OrdinalPosition > greatestOrdingalPosition)
-                {
-                    greatestOrdingalPosition = entity.OrdinalPosition;
-                }
-
-                rowsAffected = await connection.ExecuteAsync
+                var rowAffected = await connection.ExecuteAsync
                 (
                     @"UPDATE [dbo].[Ingredients]
                     SET Unit = @Unit, Quantity = @Quantity, Ingredient = @Ingredient WHERE RecipeId = @RecipeId AND OrdinalPosition = @OrdinalPosition",
@@ -93,13 +112,39 @@ namespace RecipeBook.ServiceLibrary.Repository
                     transaction: transaction
                 );
 
+                if (rowAffected == 0)
+                {
+                    remainingEntities.Add(entity);
+                }
+
+
+
+                rowsAffected += rowsAffected;
+                
+
+                lastIngredientEntity = entity;
+
             }
 
-            if (greatestOrdingalPosition != -1)
+            if (remainingEntities.Count > 0)
             {
-                rowsAffected = await connection.ExecuteAsync(@"DELETE FROM [dbo].[Ingredients] WHERE RecipeId = @RecipeId AND OrdinalPosition > @OrdinalPosition", new { recipeId, OrdinalPosition = greatestOrdingalPosition }, transaction: transaction);
+                rowsAffected += await InsertAsync(connection, transaction, remainingEntities);
             }
-            
+            else
+            {
+                rowsAffected += await connection.ExecuteAsync(@"DELETE FROM [dbo].[Ingredients] WHERE recipeId = @recipeId AND OrdinalPosition > @OrdinalPosition", new { recipeId = lastIngredientEntity.RecipeId, OrdinalPosition = lastIngredientEntity.OrdinalPosition }, transaction: transaction);
+            }
+
+
+
+
+            return rowsAffected;
+        }
+
+
+        public async Task<int> DeleteOneAsync(SqlConnection connection, DbTransaction transaction, Guid recipeId, int ordinalPosition)
+        {
+            var rowsAffected = await connection.ExecuteAsync(@"DELETE FROM [dbo].[Ingredients] WHERE recipeId = @recipeId AND OrdinalPosition = @OrdinalPosition", new { recipeId = recipeId, OrdinalPosition = ordinalPosition }, transaction: transaction);
 
             return rowsAffected;
         }

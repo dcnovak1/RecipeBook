@@ -13,10 +13,20 @@ namespace RecipeBook.ServiceLibrary.Tests.Repository
     {
         private bool _commitToDatabase = true;
 
-
+        [Fact]
         public async Task GetOneAsync_Success()
         {
+            var recipeRepository = new RecipeRepository(new IngredientsRepository(), new InstructionsRepository());
 
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+
+                Guid recipeId = Guid.Parse("845598f5-7fee-4a96-aab3-f4d553fb6063");
+
+                RecipeEntity recipeEntity = await recipeRepository.GetByIdAsync(recipeId);
+
+                Assert.Equal(recipeId, recipeEntity.Id);
+            }
         }
 
         public async Task GetManyAsync_Success()
@@ -41,8 +51,8 @@ namespace RecipeBook.ServiceLibrary.Tests.Repository
                     Description = "Chicken Parm Description",
                     Logo = null,
                     CreatedDate = DateTimeOffset.UtcNow,
-                    Ingredients = new List<IngredientsEntity>() { new IngredientsEntity() { RecipeId = recipeId, Ingredient = "Chicken", OrdinalPosition = 0, Quantity = 2, Unit = "Breasts"} },
-                    Instructions = new List<InstructionsEntity>() { new InstructionsEntity() { RecipeId = recipeId, OrdinalPosition = 0, Instruction = "Get chicken breast dry them really good" } }
+                    Ingredients = new List<IngredientEntity>() { new IngredientEntity() { RecipeId = recipeId, Ingredient = "Chicken", OrdinalPosition = 0, Quantity = 2, Unit = "Breasts"} },
+                    Instructions = new List<InstructionEntity>() { new InstructionEntity() { RecipeId = recipeId, OrdinalPosition = 0, Instruction = "Get chicken breast dry them really good" } }
                 });
 
                 if (_commitToDatabase) {
@@ -70,8 +80,8 @@ namespace RecipeBook.ServiceLibrary.Tests.Repository
                     Description = "Chicken Parm Description",
                     Logo = null,
                     CreatedDate = DateTimeOffset.UtcNow,
-                    Ingredients = new List<IngredientsEntity>() { new IngredientsEntity() { RecipeId = recipeId, Ingredient = "Not Chicken Beef", OrdinalPosition = 0, Quantity = 2, Unit = "Breasts" }, new IngredientsEntity() { RecipeId = recipeId, Ingredient = "Noodles", OrdinalPosition = 1, Quantity = 2, Unit = "lbs" } },
-                    Instructions = new List<InstructionsEntity>() { new InstructionsEntity() { RecipeId = recipeId, OrdinalPosition = 0, Instruction = "Soak them in watter" } }
+                    Ingredients = new List<IngredientEntity>() { new IngredientEntity() { RecipeId = recipeId, Ingredient = "Not Chicken Beef", OrdinalPosition = 0, Quantity = 2, Unit = "Breasts" }, new IngredientEntity() { RecipeId = recipeId, Ingredient = "Noodles", OrdinalPosition = 1, Quantity = 2, Unit = "lbs" } },
+                    Instructions = new List<InstructionEntity>() { new InstructionEntity() { RecipeId = recipeId, OrdinalPosition = 0, Instruction = "Soak them in watter" } }
                 });
 
                 if (_commitToDatabase)
