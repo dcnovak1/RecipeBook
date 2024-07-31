@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using RecipeBook.ServiceLibrary.Repository;
 using System.Transactions;
+using Microsoft.AspNetCore.Cors;
 
 namespace RecipeBook.Api.Controllers
 {
@@ -36,6 +37,7 @@ namespace RecipeBook.Api.Controllers
 
         }
 
+        [EnableCors]
         [HttpGet] //api/recipe?pagesize=10&pagenumber=1
         public async Task<IActionResult> GetListAsync([FromQuery] int pageSize = 10, [FromQuery] int pageNumber = 0)
         {
