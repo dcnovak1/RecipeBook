@@ -15,7 +15,7 @@ namespace RecipeBook.Api.Controllers
     [ApiController]
     public class RecipeController : ControllerBase
     {
-
+        [EnableCors]
         [HttpGet("{recipeId}")] //api/recipe/{recipe_id}
         public async Task<IActionResult> GetOneRecipeAsync([FromRoute]Guid recipeId)
         {
@@ -63,6 +63,7 @@ namespace RecipeBook.Api.Controllers
 
         }
 
+        [EnableCors]
         [HttpPost]
         public async Task<IActionResult> PostNewRecipeAsync([FromBody] RecipeEntity recipeEntity)
         {
@@ -83,6 +84,7 @@ namespace RecipeBook.Api.Controllers
 
         }
 
+        [EnableCors]
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromBody] RecipeEntity recipeEnitity)
         {
@@ -102,6 +104,7 @@ namespace RecipeBook.Api.Controllers
             }
         }
 
+        [EnableCors]
         [HttpDelete("{recipeId}")]
         public async Task<IActionResult> DeleteAsync(Guid recipeId)
         {

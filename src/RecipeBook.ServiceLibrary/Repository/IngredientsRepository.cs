@@ -132,8 +132,16 @@ namespace RecipeBook.ServiceLibrary.Repository
             }
             else
             {
-                rowsAffected += await connection.ExecuteAsync(@"DELETE FROM [dbo].[Ingredients] WHERE recipeId = @recipeId AND OrdinalPosition > @OrdinalPosition", new { recipeId = lastIngredientEntity.RecipeId, OrdinalPosition = lastIngredientEntity.OrdinalPosition }, transaction: transaction);
-            }
+                try
+                {
+                    rowsAffected += await connection.ExecuteAsync(@"DELETE FROM [dbo].[Ingredients] WHERE recipeId = @recipeId AND OrdinalPosition > @OrdinalPosition", new { recipeId = lastIngredientEntity.RecipeId, OrdinalPosition = lastIngredientEntity.OrdinalPosition }, transaction: transaction);
+
+                }
+                catch (SystemException error)
+                {
+                    Console.WriteLine(error);
+                }
+             }
 
 
 
